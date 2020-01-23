@@ -14,13 +14,15 @@ $(document).ready(function() {
         initializeTableau(searchString);
 
     });
+//triggers multi sort functionality	
 $("#sort").click(function() {
+	
       var sortColumns = getSelectedCheckBixes();
       var sortTo = sortData(sortColumns);
       getSummaryData("", sortTo)
     });
 });
-
+// appends asc order to selected check boxes
 function sortData(sortColumns){
 var sorto = {}
 sortColumns.forEach(sortColumn =>{
@@ -88,11 +90,12 @@ Array.prototype.keySort = function(keys) {
     });
     return this;
 };
-
+// initializes tableau api
 function initializeTableau(searchString) {
     tableau.extensions.initializeAsync().then(function() {
         //fetchFilters();
         //alert("initializing...")
+		// this call is to fetch summary data
         getSummaryData(searchString, null);
         $('#clear').click(clearAllFilters);
     }, function(err) {
@@ -101,7 +104,7 @@ function initializeTableau(searchString) {
     });
 
 }
-
+// get selected checkbox columns
 function getSelectedCheckBixes(){
   var columns = [];
             $.each($("input[name='header']:checked"), function(){
@@ -137,7 +140,7 @@ function getSelectedCheckBixes(){
             checkboxDiv.classList.add( "col-md-2");
   });
 }*/
-
+// prepares checkboxes for headers
 function prepareCheckBoxes(headers) {
   //var headers = ["a", "b", "c"];
   headers.push("a");
@@ -149,6 +152,7 @@ function prepareCheckBoxes(headers) {
   headers.push("a");
   headers.push("a");
   var check_boxes = document.getElementById("check-boxes");
+  // clearing dom to avoid duplicate div
   document.getElementById("checkbox-div").innerHTML='';
   //  var check_boxes = $("#check-boxes").addClass("col-md-2");
   headers.forEach(header => {
@@ -178,7 +182,7 @@ var checkboxDiv = document.getElementById("checkbox-div");
     // check_boxes.appendChild(checkboxDiv);
   });
 }
-
+// prepares headers for csv file
 function prepareHeaders(objArr) {
     var header = "";
     objArr.forEach(function(obj) {
@@ -187,7 +191,7 @@ function prepareHeaders(objArr) {
     return header + "\r\n";
 }
 
-
+// prepares headers for aggrid
 function prepareHeadersArr(objArr) {
     //alert(JSON.stringify(objArr))
     var headers = [];
@@ -198,7 +202,7 @@ function prepareHeadersArr(objArr) {
    // alert(JSON.stringify(headers))
     return headers;
 }
-
+// converts summary data to csv format
 function convertToCSV(objArray) {
     var str = '';
     objArray['_data'].forEach(d1 => {
@@ -214,7 +218,7 @@ function convertToCSV(objArray) {
     return str;
 }
 
-
+// prepares ag grid body
 function convertToAgGridRow(objArray) {
     //{make: "Toyota", model: "Celica", price: 35000},
     var rows = [];
@@ -240,7 +244,7 @@ function convertToAgGridRow(objArray) {
     });
     return rows;
 }
-
+// download csv starts
 function downloadExcel(obj) {
     var csv = convertToCSV(obj);
     var exportedFilenmae = "export.csv";
@@ -266,7 +270,7 @@ function downloadExcel(obj) {
     }
 
 }
-
+// fetches sheet filters
 function fetchFilters() {
     // While performing async task, show loading message to user.
     $('#loading').addClass('show');
@@ -328,7 +332,7 @@ function filterChangedHandler(filterEvent) {
     fetchFilters();
     getSummaryData();
 }
-
+// aggrid functionality
 function createAgGrid(data, searchString, sortTo) {
     colHeaders = prepareHeadersArr(data['_columns'])
     convertToAgGridRow(data)
@@ -389,7 +393,7 @@ rowData.keySort(sortTo);
 
 }
 
-
+// fetches summary data
 function getSummaryData(searchString, sortTo) {
     const dashboard = tableau.extensions.dashboardContent.dashboard;
     //alert(dashboard)
